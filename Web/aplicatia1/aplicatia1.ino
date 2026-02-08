@@ -2,8 +2,8 @@
 #include <SPIFFS.h>
 #include <ESPAsyncWebServer.h>
 
-const char* ssid = "YourSSID";
-const char* password = "YourPassword";
+const char* ssid = "yourSSID";
+const char* password = "yourPASSWORD";
 
 AsyncWebServer server(80);
 const int redLedPin = 2;   // LED GPIO
