@@ -31,5 +31,3 @@ The focus is on approachable Arduino/ESP32 exercises that give students **quick 
 > Feel free to adapt pinouts, timings, or UI text to match your classroom kit.
 
 ---
-
-## Repository Structure
