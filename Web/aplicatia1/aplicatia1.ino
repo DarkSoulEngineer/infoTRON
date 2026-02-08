@@ -2,17 +2,17 @@
 #include <SPIFFS.h>
 #include <ESPAsyncWebServer.h>
 
-const char* ssid = "CHANGE_SSID";
-const char* password = "CHANGE_PASSWORD";
+const char* ssid = "YourSSID";
+const char* password = "YourPassword";
 
 AsyncWebServer server(80);
-const int ledPin = 2;   // LED GPIO
-bool ledState = false;  // false=OFF, true=ON
+const int redLedPin = 2;   // LED GPIO
+bool redLedState = false;  // false=OFF, true=ON
 
 void setup() {
   Serial.begin(115200);
-  pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, LOW);
+  pinMode(redLedPin, OUTPUT);
+  digitalWrite(redLedPin, LOW);
 
   // Connect to Wi-Fi
   WiFi.begin(ssid, password);
@@ -53,20 +53,20 @@ void setup() {
     String page = "";
     while(file.available()) page += char(file.read());
     file.close();
-    page.replace("%LED_STATE%", ledState ? "ON" : "OFF");
+    page.replace("%RED_LED_STATE%", redLedState ? "ON" : "OFF");
     request->send(200, "text/html", page);
   });
 
   // Toggle LED
-  server.on("/toggleLED", HTTP_GET, [](AsyncWebServerRequest *request) {
-    ledState = !ledState;
-    digitalWrite(ledPin, ledState ? HIGH : LOW);
-    request->send(200, "text/plain", String("LED is ") + (ledState ? "ON" : "OFF"));
+  server.on("/toggleRedLED", HTTP_GET, [](AsyncWebServerRequest *request) {
+    redLedState = !redLedState;
+    digitalWrite(redLedPin, redLedState ? HIGH : LOW);
+    request->send(200, "text/plain", String("Red LED is ") + (redLedState ? "ON" : "OFF"));
   });
 
   // Get current LED state
-  server.on("/getLEDState", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "text/plain", String("LED is ") + (ledState ? "ON" : "OFF"));
+  server.on("/getRedLEDState", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(200, "text/plain", String("Red LED is ") + (redLedState ? "ON" : "OFF"));
   });
 
   // Serve CSS/JS files from SPIFFS

@@ -1,22 +1,22 @@
 const toggleBtn = document.getElementById("toggleBtn");
-const ledStateSpan = document.getElementById("ledState");
+const redLedStateSpan = document.getElementById("redLedState");
 
-// Toggle LED when button is clicked
+// Toggle Red LED when button is clicked
 toggleBtn.addEventListener("click", () => {
-  fetch("/toggleLED")
+  fetch("/toggleRedLED")
     .then(response => response.text())
     .then(state => {
-      ledStateSpan.innerText = state.split("LED is ")[1];
+      redLedStateSpan.innerText = state.split("Red LED is ")[1];
     })
     .catch(err => console.error(err));
 });
 
 // Auto-refresh LED state every 0.2 seconds
 setInterval(() => {
-  fetch("/getLEDState")
+  fetch("/getRedLEDState")
     .then(response => response.text())
     .then(state => {
-      ledStateSpan.innerText = state.split("LED is ")[1];
+      redLedStateSpan.innerText = state.split("Red LED is ")[1];
     })
     .catch(err => console.error(err));
 }, 200);

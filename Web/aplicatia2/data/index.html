@@ -1,15 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>ESP32 LED Control</title>
   <link rel="stylesheet" href="/style.css">
 </head>
+
 <body>
   <div class="container">
     <h1>Red LED is <span id="redLedState">%RED_LED_STATE%</span></h1>
-    <button id="toggleBtn">Toggle Red LED</button>
+    <button id="toggleRedButton">Toggle Red LED</button>
   </div>
+  
+  <div class="container">
+    <h1>Green LED is <span id="greenLedState">%GREEN_LED_STATE%</span></h1>
+    <button id="toggleGreenButton">Toggle Green LED</button>
+  </div>
+  
   <script src="/script.js"></script>
 </body>
 </html>
