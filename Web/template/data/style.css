@@ -6,62 +6,6 @@ body {
   color: #333;
 }
 
-.container {
-  display: inline-block;
-  padding: 30px;
-  background-color: #fff;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-h1 {
-  margin-bottom: 30px;
-  font-size: 2em;
-}
-
-button {
-  padding: 15px 30px;
-  font-size: 1.2em;
-  background-color: #6c757d; /* default (OFF) */
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button.off {
-  background-color: #6c757d;
-}
-
-button.off:hover {
-  background-color: #5a6268;
-}
-
-button.red.on {
-  background-color: #c62828;
-}
-
-button.red.on:hover {
-  background-color: #b71c1c;
-}
-
-button.green.on {
-  background-color: #2e7d32;
-}
-
-button.green.on:hover {
-  background-color: #27642b;
-}
-
-#redLedState.led-on {
-  color: #c62828;
-}
-
-#greenLedState.led-on {
-  color: #2e7d32;
-}
-
-.led-off {
-  color: #555;
+.title {
+  font-size: 2.5em;
 }

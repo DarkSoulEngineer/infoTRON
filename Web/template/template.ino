@@ -1,6 +1,7 @@
 #include <WiFi.h>
-#include <SPIFFS.h>
+#include <LittleFS.h>
 #include <ESPAsyncWebServer.h>
+
 
 const char* ssid = "yourSSID";
 const char* password = "yourPASSWORD";
@@ -31,17 +32,18 @@ void setup() {
     // Optionally fallback to AP mode
     // WiFi.softAP("ESP32-AP", "12345678");
     // Serial.println("AP IP: " + WiFi.softAPIP().toString());
+    return;
   }
 
-  // Mount SPIFFS (Filesystem)
-  if (!SPIFFS.begin(true)) {
-    Serial.println("SPIFFS Mount Failed");
+  // Mount LittleFS
+  if (!LittleFS.begin(true)) {
+    Serial.println("LittleFS Mount Failed");
     return;
   }
 
   // Serve index.html
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    File file = SPIFFS.open("/index.html", "r");
+    File file = LittleFS.open("/index.html", "r");
     if (!file) {
       request->send(404, "text/plain", "File not found");
       return;
@@ -52,12 +54,12 @@ void setup() {
     request->send(200, "text/html", page);
   });
 
-  // Serve CSS/JS files from SPIFFS
-  server.serveStatic("/", SPIFFS, "/");
+  // Serve static files (HTML, CSS, JS)
+  server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
 
   server.begin();
 }
 
 void loop() {
-  // Async server handles everything non-blocking
+  // Non-blocking, Async server handles requests
 }

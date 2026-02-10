@@ -1,5 +1,5 @@
 #include <WiFi.h>
-#include <SPIFFS.h>
+#include <LittleFS.h>
 #include <ESPAsyncWebServer.h>
 
 // Wi-Fi credentials
@@ -55,22 +55,22 @@ void setup() {
   } else {
     Serial.println();
     Serial.println("Failed to connect to WiFi, starting AP mode...");
-    WiFi.softAP("ESP32-AP", "12345678");
-    Serial.print("AP IP: ");
-    Serial.println(WiFi.softAPIP());
-  }
-
-  // Mount SPIFFS
-  if (!SPIFFS.begin(true)) {
-    Serial.println("SPIFFS Mount Failed");
+    // WiFi.softAP("ESP32-AP", "12345678");
+    // Serial.print("AP IP: ");
+    // Serial.println(WiFi.softAPIP());
     return;
   }
 
-  // Serve main page and static assets
+  // Mount LittleFS
+  if (!LittleFS.begin(true)) {
+    Serial.println("LittleFS Mount Failed");
+    return;
+  }
+
+  // Serve index.html
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(SPIFFS, "/index.html", "text/html");
+    request->send(LittleFS, "/index.html", "text/html");
   });
-  server.serveStatic("/", SPIFFS, "/");
 
   server.on("/setColor", HTTP_GET, [](AsyncWebServerRequest *request) {
     if (!request->hasParam("value")) {
@@ -88,7 +88,8 @@ void setup() {
   server.on("/getColor", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(200, "text/plain", colorCode);
   });
-
+  
+  server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
   server.begin();
 }
 
