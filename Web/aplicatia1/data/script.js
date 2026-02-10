@@ -1,28 +1,34 @@
-const updateUI = (button, span, stateText) => {
-  const isOn = (stateText || "").trim().toUpperCase() === "ON";
-  span.innerText = isOn ? "ON" : "OFF";
-  span.classList.toggle("led-on", isOn);
-  span.classList.toggle("led-off", !isOn);
-  button.classList.toggle("on", isOn);
-  button.classList.toggle("off", !isOn);
+const toggleRedButton = document.getElementById("toggleRedButton");
+const redLedState = document.getElementById("redLedState");
+
+
+const updateElement = (button, span, state) => {
+  // Update text
+  span.innerText = state;
+  // Toggle LED text color
+  span.classList.toggle("led-on", state === "ON");
+  span.classList.toggle("led-off", state !== "ON");
+  // Toggle button color
+  button.classList.toggle("on", state === "ON");
+  button.classList.toggle("off", state !== "ON");
 };
 
-const toggleBtn = document.getElementById("toggleBtn");
-const redLedStateSpan = document.getElementById("redLedState");
-updateUI(toggleBtn, redLedStateSpan, redLedStateSpan.innerText);
+// Fetch LED state and update inline
+const fetchRed = async () => {
+  try {
+    const { redLedState: serverState } = await (await fetch("/api/getRedLEDState")).json();
+    updateElement(toggleRedButton, redLedState, serverState);
+  } catch(e) { console.error(e); }
+};
 
-// Toggle Red LED when button is clicked
-toggleBtn.addEventListener("click", () => {
-  fetch("/toggleRedLED")
-    .then(response => response.text())
-    .then(state => updateUI(toggleBtn, redLedStateSpan, state.split("Red LED is ")[1]))
-    .catch(err => console.error(err));
+// Initialize
+fetchRed();
+
+// Button clicks toggle directly
+toggleRedButton.addEventListener("click", async () => {
+  const { redLedState: serverState } = await (await fetch("/api/toggleRedLED")).json();
+  updateElement(toggleRedButton, redLedState, serverState);
 });
 
-// Auto-refresh LED state every 0.2 seconds
-setInterval(() => {
-  fetch("/getRedLEDState")
-    .then(response => response.text())
-    .then(state => updateUI(toggleBtn, redLedStateSpan, state.split("Red LED is ")[1]))
-    .catch(err => console.error(err));
-}, 200);
+// Auto-refresh
+setInterval(fetchRed, 200);

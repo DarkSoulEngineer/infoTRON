@@ -1,6 +1,7 @@
 #include <WiFi.h>
-#include <SPIFFS.h>
+#include <LittleFS.h>
 #include <ESPAsyncWebServer.h>
+
 
 const char* ssid = "yourSSID";
 const char* password = "yourPASSWORD";
@@ -43,17 +44,18 @@ void setup() {
     // Optionally fallback to AP mode
     // WiFi.softAP("ESP32-AP", "12345678");
     // Serial.println("AP IP: " + WiFi.softAPIP().toString());
+    return;
   }
 
-  // Mount SPIFFS (Filesystem)
-  if (!SPIFFS.begin(true)) {
-    Serial.println("SPIFFS Mount Failed");
+  // Mount LittleFS (Filesystem)
+  if (!LittleFS.begin(true)) {
+    Serial.println("LittleFS Mount Failed");
     return;
   }
 
   // Serve index.html
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    File file = SPIFFS.open("/index.html", "r");
+    File file = LittleFS.open("/index.html", "r");
     if (!file) {
       request->send(404, "text/plain", "File not found");
       return;
@@ -61,41 +63,43 @@ void setup() {
     String page = "";
     while(file.available()) page += char(file.read());
     file.close();
-    page.replace("%RED_LED_STATE%", redLedState ? "ON" : "OFF");
-    page.replace("%GREEN_LED_STATE%", greenLedState ? "ON" : "OFF");
     request->send(200, "text/html", page);
   });
 
-  // Toggle Red LED
-  server.on("/toggleRedLED", HTTP_GET, [](AsyncWebServerRequest *request) {
+  // REST API: Red toggle LED
+  server.on("/api/toggleRedLED", HTTP_GET, [](AsyncWebServerRequest *request){
     redLedState = !redLedState;
     digitalWrite(redLedPin, redLedState ? HIGH : LOW);
-    request->send(200, "text/plain", String("Red LED is ") + (redLedState ? "ON" : "OFF"));
+    request->send(200, "application/json",
+                  String("{\"redLedState\":\"") + (redLedState ? "ON" : "OFF") + "\"}");
   });
 
-  // Get current Red LED state
-  server.on("/getRedLEDState", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "text/plain", String("Red LED is ") + (redLedState ? "ON" : "OFF"));
+  // REST API: get Red LED state
+  server.on("/api/getRedLEDState", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "application/json",
+                  String("{\"redLedState\":\"") + (redLedState ? "ON" : "OFF") + "\"}");
   });
 
-  // Toggle Green LED
-  server.on("/toggleGreenLED", HTTP_GET, [](AsyncWebServerRequest *request) {
+  // REST API: Green toggle LED
+  server.on("/api/toggleGreenLED", HTTP_GET, [](AsyncWebServerRequest *request){
     greenLedState = !greenLedState;
     digitalWrite(greenLedPin, greenLedState ? HIGH : LOW);
-    request->send(200, "text/plain", String("Green LED is ") + (greenLedState ? "ON" : "OFF"));
+    request->send(200, "application/json",
+                  String("{\"greenLedState\":\"") + (greenLedState ? "ON" : "OFF") + "\"}");
   });
 
-  // Get current Green LED state
-  server.on("/getGreenLEDState", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "text/plain", String("Green LED is ") + (greenLedState ? "ON" : "OFF"));
+  // REST API: get Green LED state
+  server.on("/api/getGreenLEDState", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "application/json",
+                  String("{\"greenLedState\":\"") + (greenLedState ? "ON" : "OFF") + "\"}");
   });
 
-  // Serve CSS/JS files from SPIFFS
-  server.serveStatic("/", SPIFFS, "/");
+  // Serve static files (HTML, CSS, JS)
+  server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
 
   server.begin();
 }
 
 void loop() {
-  // Async server handles everything non-blocking
+  // Non-blocking, Async server handles requests
 }

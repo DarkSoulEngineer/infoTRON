@@ -1,47 +1,47 @@
-const updateUI = (button, span, stateText, colorClass) => {
-  const isOn = (stateText || "").trim().toUpperCase() === "ON";
-  span.innerText = isOn ? "ON" : "OFF";
-  span.classList.toggle("led-on", isOn);
-  span.classList.toggle("led-off", !isOn);
-  button.classList.toggle("on", isOn);
-  button.classList.toggle("off", !isOn);
-  button.classList.add(colorClass);
+const toggleRedButton = document.getElementById("toggleRedButton");
+const redLedState = document.getElementById("redLedState");
+
+const toggleGreenButton = document.getElementById("toggleGreenButton");
+const greenLedState = document.getElementById("greenLedState");
+
+const updateElement = (button, span, state) => {
+  span.innerText = state;
+  span.classList.toggle("led-on", state === "ON");
+  span.classList.toggle("led-off", state !== "ON");
+  button.classList.toggle("on", state === "ON");
+  button.classList.toggle("off", state !== "ON");
 };
 
-// Red LED Code
-const toggleRedButton = document.getElementById("toggleRedButton");
-const redLedStateSpan = document.getElementById("redLedState");
-updateUI(toggleRedButton, redLedStateSpan, redLedStateSpan.innerText, "red");
+// Fetch LED states
+const fetchRed = async () => {
+  try {
+    const { redLedState: serverState } = await (await fetch("/api/getRedLEDState")).json();
+    updateElement(toggleRedButton, redLedState, serverState);
+  } catch(e) { console.error(e); }
+};
 
-toggleRedButton.addEventListener("click", () => {
-  fetch("/toggleRedLED")
-    .then(response => response.text())
-    .then(state => updateUI(toggleRedButton, redLedStateSpan, state.split("Red LED is ")[1], "red"))
-    .catch(err => console.error(err));
+const fetchGreen = async () => {
+  try {
+    const { greenLedState: serverState } = await (await fetch("/api/getGreenLEDState")).json();
+    updateElement(toggleGreenButton, greenLedState, serverState);
+  } catch(e) { console.error(e); }
+};
+
+// Initialize
+fetchRed();
+fetchGreen();
+
+// Button clicks toggle LEDs
+toggleRedButton.addEventListener("click", async () => {
+  const { redLedState: serverState } = await (await fetch("/api/toggleRedLED")).json();
+  updateElement(toggleRedButton, redLedState, serverState);
 });
 
-setInterval(() => {
-  fetch("/getRedLEDState")
-    .then(response => response.text())
-    .then(state => updateUI(toggleRedButton, redLedStateSpan, state.split("Red LED is ")[1], "red"))
-    .catch(err => console.error(err));
-}, 200);
-
-// Green LED Code
-const toggleGreenButton = document.getElementById("toggleGreenButton");
-const greenLedStateSpan = document.getElementById("greenLedState");
-updateUI(toggleGreenButton, greenLedStateSpan, greenLedStateSpan.innerText, "green");
-
-toggleGreenButton.addEventListener("click", () => {
-  fetch("/toggleGreenLED")
-    .then(response => response.text())
-    .then(state => updateUI(toggleGreenButton, greenLedStateSpan, state.split("Green LED is ")[1], "green"))
-    .catch(err => console.error(err));
+toggleGreenButton.addEventListener("click", async () => {
+  const { greenLedState: serverState } = await (await fetch("/api/toggleGreenLED")).json();
+  updateElement(toggleGreenButton, greenLedState, serverState);
 });
 
-setInterval(() => {
-  fetch("/getGreenLEDState")
-    .then(response => response.text())
-    .then(state => updateUI(toggleGreenButton, greenLedStateSpan, state.split("Green LED is ")[1], "green"))
-    .catch(err => console.error(err));
-}, 200);
+// Auto-refresh
+setInterval(fetchRed, 200);
+setInterval(fetchGreen, 200);
