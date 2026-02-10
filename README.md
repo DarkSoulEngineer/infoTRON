@@ -10,15 +10,14 @@ The focus is on approachable Arduino/ESP32 exercises that give students **quick 
 ## Features
 - **LED Demos:** Quick GPIO experiments and simple animation patterns.  
 - **Web Demos:** ESP32 Async Web Server with static HTML, CSS, and JS assets. Includes screenshots for guidance.  
-- **Curriculum-Aligned:** Exercises map to digital I/O, state machines, and basic networking topics.  
 
 ---
 
 ## Requirements
 - ESP32 development board  
 - Breadboard, jumper wires, LEDs, resistors  
-- Arduino IDE 1.x with **ESP32 board package**  
-- Optional: [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) and SPIFFS plugin for web demos  
+- Arduino IDE with **ESP32 board package**  
+- Optional: [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) and LittleFS plugin for web demos  
 
 ---
 
