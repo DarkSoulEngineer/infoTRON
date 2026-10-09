@@ -17,7 +17,7 @@
 
 ## Description
 
-infoTRON collects open, classroom-ready lab exercises for the **infoTRON 2026 mechatronics program**. The labs are organized into two tracks — `LED/` for bare-metal GPIO work and `Web/` for networked control — so students get quick, visible results on an ESP32 board and then iterate on pinouts, timings, and interfaces. Every exercise is a self-contained Arduino `.ino` sketch with commented code that walks through the setup.
+infoTRON collects open, classroom-ready lab exercises for the **infoTRON 2026 mechatronics program**. The labs are organized into two tracks: `LED/` for bare-metal GPIO work and `Web/` for networked control, so students get quick, visible results on an ESP32 board and then iterate on pinouts, timings, and interfaces. Every exercise is a self-contained Arduino `.ino` sketch with commented code that walks through the setup.
 
 ### Features
 
@@ -62,4 +62,4 @@ cd infoTRON
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
